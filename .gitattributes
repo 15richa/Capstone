@@ -1,0 +1,7 @@
+# Set script to use LF EOL character
+*.sh text eol=LF
+*.tf text eol=LF
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
