@@ -2,7 +2,7 @@
 This project has been designed to simulate an end-to-end DevOps project implementation.
 
 # Requirement
-1. Dockerize a production application which is written in flask. Sample flask applicaion used: https://github.com/15richa/flask-sample.git
+1. Dockerize a production application which is written in flask. Sample flask applicaion used: https://github.com/15richa/flask-sample.git. Fork this project as you would later enable webhooks for Git to send events to Jenkins.
 2. Use Kubernetes to deploy this app
 3. Create a Jenkins pipeline to deploy the latest version of the app the moment there is a change on the github repo
 4. Create an automated test case, to verify the app is working. Only when the test case is passed, the application will be deployed on Kubernetes. For testing, application has to be deployed on Docker
@@ -167,4 +167,39 @@ http://<IP address of Jenkins server>:8080/
 http://<IP address of Docker server>:4243/version
 ```
 
-17. 
+17. We now have the servers ready, now it need to be configured. Copy private key to Jenkins server so that we can SSH into docker server from jenkins server.
+
+```
+ansible jenkins-server -m copy -a "src=/home/ubuntu/.ssh/id_rsa dest=/home/ubuntu/.ssh/id_rsa" -b
+```
+
+Now SSH into the Jenkins server and get the initial password for Jenkins
+```
+ssh ubuntu@<IP address of Jenkins server>
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+Now, go to the browser and enter Jenkins URL. When asked provide the inital password you fetched from Jenkins server.
+```
+http://<IP address of Jenkins server>:8080/
+```
+
+- Under Unlock Jenkins, enter the above Initial password. Continue.
+- Click on Install suggested Plugins on Customize Jenkins page.
+- Once the plugins are installed, it gives you the page where you can create new admin user id and password. 
+- Enter user id and password. Save & Continue. 
+- In next step, on Instance Configuration Page, verify your Jenkins Public IP and Port Number then click on Save and Finish.
+- Go to Manage Jenkins > Manage Plugins
+
+18. Before we create our pipeline in Jenkins, we will configure the webhook. Go to the Github project you cloned for flask-app at the begining of the setup. Click on **Settings > Webhooks** and configure the webhook by providing the Payload URL of your Jenkins server.
+
+The Payload URL will be in the format: **http://<IP address of Jenkins server>:8080/github-webhook/**
+
+19. Now create a new Jenkins Job **Dashboards > New item** of type pipeline. Under the Git project section provide the Git url as below,
+
+**Project url: https://github.com/15richa/flask-sample.git**
+
+Under Build trigger, select **Github hook trigger for GITScm polling**
+
+Locate pipeline code at **scripts/pipeline.groovy**, update the docker account and hub token and then create your Jenkins pipeline.
+
