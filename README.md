@@ -193,7 +193,7 @@ http://<IP address of Jenkins server>:8080/
 
 18. Before we create our pipeline in Jenkins, we will configure the webhook. Go to the Github project you cloned for flask-app at the begining of the setup. Click on **Settings > Webhooks** and configure the webhook by providing the Payload URL of your Jenkins server.
 
-The Payload URL will be in the format: **http://<IP address of Jenkins server>:8080/github-webhook/**
+The Payload URL will be in the format: **http://\<IP address of Jenkins server\>:8080/github-webhook/**
 
 19. Now create a new Jenkins Job **Dashboards > New item** of type pipeline. Under the Git project section provide the Git url as below,
 
@@ -203,3 +203,57 @@ Under Build trigger, select **Github hook trigger for GITScm polling**
 
 Locate pipeline code at **scripts/pipeline.groovy**, update the docker account and hub token and then create your Jenkins pipeline.
 
+20. We will be manually deploying application on Kubernetes cluster from Lab VM. For this we require Kubernetes client install **kubectl**. Follow instructions here - **https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/**
+
+21. Before we run the Jenkins pipeline to deploy the application based on changes in Git, we will do intial build and deployment in Kubernetes cluster locally. This will give a confirmation that the application build and deployment process works correctly.
+
+- Run the Flask application locally to verify the execution of the app.
+```
+**Note: Change the Git url to your own forked project.
+git clone https://github.com/15richa/flask-sample.git
+cd flask-sample
+python hello.py
+
+Access the application from browser. You will get the URL when you run **python hello.py**
+```
+
+- Docker build the Flask app, to verify the build process.
+```
+cd flask-sample
+docker build --no-cache . -t richasrivastava15/flask-sample
+
+#Verify docker image
+docker image list
+
+#Push the docker image to hub.
+docker push richasrivastava15/flask-sample
+```
+
+- You can either create a dedicated namespace to deploy the application or use the **default** namespace. For this exercise, we will use the default namespace.
+
+- Setup Kubernetes client **kubectl**. Locate the Kubernetes admin.conf from the K8s cluster.
+```
+export KUBECONFIG=/path/to/admin.conf
+```
+
+- Ensure your kubernetes node is up and running by executing below command.
+```
+kubectl get nodes -owide
+```
+
+- Now we will create a deployment resource in Kubernetes to deploy our application in container.
+```
+kubectl apply -f scripts/kubernetes/deployment.yaml
+```
+
+- Now create a Service and Ingress resource.
+```
+kubectl apply -f scripts/kubernetes/service.yaml
+kubectl apply -f scripts/kubernetes/ingress.yaml
+```
+
+22. Now that we are all set, push a change in your Git project and check whether Jenkins pipeline auto-triggers.
+
+Expectation is Jenkins pipeline will listent on webhook event, trigger the pipeline Job which will clone the project from Git, perform docker build and push the tag into Hub and then deploy the application updated tag from Hub into your Kubernetes cluster.
+
+23. Happy Learning.!

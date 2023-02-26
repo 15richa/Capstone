@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-sample-service
+  labels:
+    app: flask-sample
+    author: richa
+spec:
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 5000
+  selector:
+    app: flask-sample

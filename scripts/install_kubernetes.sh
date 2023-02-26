@@ -73,3 +73,16 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
+curl https://docs.projectcalico.org/manifests/calico.yaml -o kubectl apply -f calico.yaml
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/cloud/deploy.yaml
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/baremetal/deploy.yaml
+
+
+for ep in `kubectl get pods -l app=custom-website -o go-template='{{range .items}}{{.status.podIP}}{{"\n"}}{{end}}'`;do echo $ep;wget -qO- $ep;done
+
+for i in $(seq 1 3); do 
+    wget -qO- 10.96.166.55:80
+done
+

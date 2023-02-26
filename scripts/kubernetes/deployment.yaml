@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-sample
+  labels:
+    app: flask-sample
+    author: richa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-sample
+  template:
+    metadata:
+      name: flask-sample
+      labels:
+        app: flask-sample
+        author: richa
+    spec:
+      containers:
+        - name: flask-sample
+          image: docker.io/richasrivastava15/flask-sample
