@@ -124,11 +124,17 @@ sudo cat /etc/ansible/hosts
 
 [jenkins-server]
 X.X.X.X
-[kubernetes-server]
+[docker-server]
+X.X.X.X
+[k8s-controller]
+X.X.X.X
+[k8s-node1]
+X.X.X.X
+[k8s-node2]
 X.X.X.X
 ```
 
-14. Now SSH into kubernetes-server & jenkins-server and check they are accessible
+14. Now SSH into each of server provisioned using Terraform and check they are accessible
 
 ```
 ssh ubuntu@<Jenkins ip address>
@@ -141,3 +147,24 @@ exit
 ssh ubuntu@<kubernetes ip address>  
 sudo hostnamectl set-hostname Kubernetes
 ```
+
+15. We will now run Ansible playbooks to deploy Jenkins and Docker server. For Kubernetes, user can either setup up the nodes based on their usage and use the sample script **scripts/install_kubernetes.sh**
+
+For running the playbooks, navigate to **ansible/playbooks** and run below command from the Lab VM.
+
+```
+ansible-playbook configure_infra.yaml 
+```
+
+16. Once Jenkins and Docker are installed you need to configure the deployment. First verify whether servers are up and running.
+
+To verify Jenkins installation, access below from your browser
+```
+#Get Jenkins IP from /etc/ansible/hosts
+http://<IP address of Jenkins server>:8080/
+
+#Get Docker IP from /etc/ansible/hosts
+http://<IP address of Docker server>:4243/version
+```
+
+17. 

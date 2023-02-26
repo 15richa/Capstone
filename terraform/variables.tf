@@ -29,5 +29,5 @@ variable public_key {
 
 variable "my-servers" {
   type    = list(string)
-  default = ["jenkins-server", "kubernetes-server"]
+  default = ["jenkins-server", "docker-server", "k8s-controller", "k8s-node1", "k8s-node2"]
 }
