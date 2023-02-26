@@ -79,7 +79,7 @@ pipeline{
     docker build --no-cache . -t richasrivastava15/flask-sample:1.1.${BUILD_NUMBER}
 
     #publish to prod
-    docker push ranjan7k/flask-sample:1.1.${BUILD_NUMBER}
+    docker push richasrivastava15/flask-sample:1.1.${BUILD_NUMBER}
 
     #Here goes the logic to deploy to Kubernetes
     
@@ -104,7 +104,7 @@ pipeline{
   kubectl get pods -n default|grep -i "flask-sample"
   
   echo "Update the K8s deployment resource with latest push docker image"
-  kubectl set image deployment.v1.apps/flask-sample flask-sample=docker.io/ranjan7k/flask-sample:1.1.${BUILD_NUMBER}
+  kubectl set image deployment.v1.apps/flask-sample flask-sample=docker.io/richasrivastava15/flask-sample:1.1.${BUILD_NUMBER}
   
   echo "Verify POD is coming up"
   pod_status="Pending"
